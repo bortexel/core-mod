@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "core",
+  "version": "${version}",
+  "name": "BortexelCore",
+  "description": "Core mod for Bortexel server",
+  "authors": [
+    "RuscalWorld"
+  ],
+  "contact": {
+    "website": "https://bortexel.ru",
+    "repo": "https://github.com/bortexel/core-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/core/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "ru.bortexel.core.Core"
+    ]
+  },
+  "mixins": [
+    "core.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.16.5"
+  }
+}
