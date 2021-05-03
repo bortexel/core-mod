@@ -13,7 +13,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Storage {
     public static final Path DATABASE_PATH = FabricLoader.getInstance().getGameDir().resolve("mods/bortexel/core.db");
@@ -37,27 +39,24 @@ public class Storage {
         PreparedStatement statement = this.getConnection().prepareStatement(query);
         statement.setInt(1, id);
 
-        try {
-            T instance = clazz.getConstructor().newInstance();
-            final HashMap<String, Field> fields = ReflectUtil.getClassFields(instance.getClass());
+        ResultSet resultSet = statement.executeQuery();
+        if (!resultSet.next()) throw new NotFoundException("id", id);
 
-            ResultSet resultSet = statement.executeQuery();
-            if (!resultSet.next()) throw new NotFoundException("id", id);
-            for (String column : DatabaseUtil.getColumnNames(resultSet)) {
-                if (!fields.containsKey(column)) continue;
-                Object value = resultSet.getString(column);
+        return this.parseRow(clazz, resultSet);
+    }
 
-                Field field = fields.get(column);
-                field.setAccessible(true);
-                ReflectUtil.setFieldValue(instance, field, value);
-            }
+    public <T> List<T> retrieveAll(Class<T> clazz) throws InvalidModelException, SQLException {
+        if (!clazz.isAnnotationPresent(Model.class)) throw new InvalidModelException(clazz);
+        Model model = clazz.getAnnotation(Model.class);
 
-            return instance;
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        String query = String.format("SELECT * FROM `%s`", model.table());
+        PreparedStatement statement = this.getConnection().prepareStatement(query);
 
-        return null;
+        ResultSet resultSet = statement.executeQuery();
+        List<T> result = new ArrayList<>();
+        while (resultSet.next()) result.add(this.parseRow(clazz, resultSet));
+
+        return result;
     }
 
     public <T extends DefaultModel> int save(T model) throws InvalidModelException, SQLException {
@@ -89,6 +88,28 @@ public class Storage {
         } else statement = DatabaseUtil.makeUpdateStatement("id", "" + model.getId(), values, table, this.getConnection());
 
         return statement.executeUpdate();
+    }
+
+    protected <T> T parseRow(Class<T> clazz, ResultSet resultSet) throws SQLException {
+        try {
+            T instance = clazz.getConstructor().newInstance();
+            final HashMap<String, Field> fields = ReflectUtil.getClassFields(instance.getClass());
+
+            for (String column : DatabaseUtil.getColumnNames(resultSet)) {
+                if (!fields.containsKey(column)) continue;
+                Object value = resultSet.getString(column);
+
+                Field field = fields.get(column);
+                field.setAccessible(true);
+                ReflectUtil.setFieldValue(instance, field, value);
+            }
+
+            return instance;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private Connection getConnection() throws SQLException {
