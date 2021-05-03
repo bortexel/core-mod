@@ -1,7 +1,18 @@
+import net.fabricmc.loom.task.RemapJarTask
+
+buildscript {
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+    }
+}
+
 plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'fabric-loom' version '0.7.29'
     id 'maven-publish'
 }
+
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -21,6 +32,8 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
+
+    compile "org.xerial:sqlite-jdbc:${project.sqlite_version}"
 }
 
 processResources {
@@ -54,6 +67,27 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 jar {
     from "LICENSE"
 }
+
+shadowJar {
+    archiveClassifier = "all-dev"
+
+    dependencies {
+        include(dependency("org.xerial:sqlite-jdbc:${project.sqlite_version}"))
+    }
+
+    relocate("ru.ruscalworld.bortexel4j", "ru.bortexel.core.dependencies.bortexel4j")
+//    relocate("org.sqlite.core", "ru.bortexel.core.dependencies.sqlite.core")
+//    relocate("org.sqlite", "ru.bortexel.core.dependencies.sqlite")
+}
+
+task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
+    input = shadowJar.archiveFile
+    archiveFileName = shadowJar.archiveFileName.get().replaceAll("-dev\\.jar\$", ".jar")
+    addNestedDependencies = true
+    remapAccessWidener = true
+}
+
+assemble.dependsOn(remapShadowJar)
 
 // configure the maven publication
 publishing {
