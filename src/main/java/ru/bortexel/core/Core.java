@@ -1,26 +1,26 @@
 package ru.bortexel.core;
 
 import net.fabricmc.api.ModInitializer;
-import ru.bortexel.core.exceptions.InvalidModelException;
-import ru.bortexel.core.exceptions.NotFoundException;
-import ru.bortexel.core.models.Freeze;
-import ru.bortexel.core.storage.Storage;
+import net.fabricmc.loader.api.FabricLoader;
+import ru.ruscalworld.storagelib.Storage;
+import ru.ruscalworld.storagelib.impl.SQLiteStorage;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.UUID;
 
 public class Core implements ModInitializer {
+    public static final Path DATABASE_PATH = FabricLoader.getInstance().getGameDir().resolve("mods/bortexel/core.db");
     private Storage storage;
 
     @Override
     public void onInitialize() {
         try {
-            Storage storage = new Storage();
+            Storage storage = new SQLiteStorage("jdbc:sqlite:" + DATABASE_PATH.toAbsolutePath());
             storage.setup();
+
             this.setStorage(storage);
-        } catch (SQLException | IOException exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }

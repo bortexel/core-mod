@@ -1,8 +1,8 @@
 package ru.bortexel.core.models;
 
-import ru.bortexel.core.storage.DefaultModel;
-import ru.bortexel.core.storage.annotations.Model;
-import ru.bortexel.core.storage.annotations.Property;
+import ru.ruscalworld.storagelib.DefaultModel;
+import ru.ruscalworld.storagelib.annotations.Model;
+import ru.ruscalworld.storagelib.annotations.Property;
 
 import java.sql.Timestamp;
 import java.util.UUID;

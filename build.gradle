@@ -18,8 +18,27 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+version = project.mod_version as Object
+group = project.maven_group as Object
+
+repositories {
+    maven {
+        name = 'Bortexel'
+        url = 'https://maven.pkg.github.com/bortexel/bortexel4j'
+        credentials {
+            username = BortexelUsername
+            password = BortexelPassword
+        }
+    }
+    maven {
+        name = 'RuscalWorld'
+        url = 'https://maven.pkg.github.com/ruscalworld/storagelib'
+        credentials {
+            username = BortexelUsername
+            password = BortexelPassword
+        }
+    }
+}
 
 dependencies {
     //to change the versions see the gradle.properties file
@@ -34,6 +53,7 @@ dependencies {
     // You may need to force-disable transitiveness on them.
 
     compile "org.xerial:sqlite-jdbc:${project.sqlite_version}"
+    compile "ru.ruscalworld:storagelib:${project.storagelib_version}"
 }
 
 processResources {
@@ -73,11 +93,11 @@ shadowJar {
 
     dependencies {
         include(dependency("org.xerial:sqlite-jdbc:${project.sqlite_version}"))
+        include(dependency("ru.ruscalworld:storagelib:${project.storagelib_version}"))
     }
 
     relocate("ru.ruscalworld.bortexel4j", "ru.bortexel.core.dependencies.bortexel4j")
-//    relocate("org.sqlite.core", "ru.bortexel.core.dependencies.sqlite.core")
-//    relocate("org.sqlite", "ru.bortexel.core.dependencies.sqlite")
+    relocate("ru.ruscalworld.storagelib", "ru.bortexel.core.dependencies.storagelib")
 }
 
 task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
