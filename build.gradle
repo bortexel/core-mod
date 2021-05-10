@@ -54,6 +54,8 @@ dependencies {
 
     compile "org.xerial:sqlite-jdbc:${project.sqlite_version}"
     compile "ru.ruscalworld:storagelib:${project.storagelib_version}"
+
+    compileOnly 'net.luckperms:api:5.3'
 }
 
 processResources {

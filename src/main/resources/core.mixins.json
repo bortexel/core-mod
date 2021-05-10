@@ -3,9 +3,9 @@
   "minVersion": "0.8",
   "package": "ru.bortexel.core.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
-  ],
-  "client": [
+  "server": [
+    "PlayerManagerMixin",
+    "ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
