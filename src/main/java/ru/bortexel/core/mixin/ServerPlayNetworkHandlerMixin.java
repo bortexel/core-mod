@@ -20,9 +20,9 @@ public class ServerPlayNetworkHandlerMixin {
     public void onPlayerMove(PlayerMoveC2SPacket packet, CallbackInfo info) {
         if (player.prevX == Double.MAX_VALUE) return;
         ActionResult result = ServerPlayerEvents.PLAYER_MOVE.invoker().move(player);
-        if (result == ActionResult.FAIL) {
+        if (result == ActionResult.FAIL) try {
             info.cancel();
             player.requestTeleport(player.getX(), player.getY(), player.getZ());
-        }
+        } catch (Exception ignored) { }
     }
 }

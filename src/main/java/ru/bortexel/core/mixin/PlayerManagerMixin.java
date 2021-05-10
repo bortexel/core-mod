@@ -12,7 +12,7 @@ import ru.bortexel.core.events.ServerPlayerEvents;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
-    @Inject(method = "onPlayerConnect", at = @At("HEAD"))
+    @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
         ServerPlayerEvents.PLAYER_JOIN.invoker().join(player);
     }

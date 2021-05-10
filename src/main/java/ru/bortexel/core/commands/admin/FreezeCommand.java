@@ -20,6 +20,7 @@ import ru.ruscalworld.storagelib.Storage;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -48,9 +49,11 @@ public class FreezeCommand extends DefaultCommand {
             Freeze freeze = freezedPlayers.get(player.getUuid());
             freeze.cancel(player);
 
-            try {
-                storage.delete(freeze);
-            } catch (Exception ignored) { }
+            CompletableFuture.runAsync(() -> {
+                try {
+                    storage.delete(freeze);
+                } catch (Exception ignored) { }
+            });
 
             freezedPlayers.remove(player.getUuid());
             source.sendFeedback(new LiteralText("Игрок ").append(player.getDisplayName()).append(" был разморожен"), true);
@@ -63,14 +66,15 @@ public class FreezeCommand extends DefaultCommand {
             freeze.setAdminId(source.getPlayer().getUuid());
             freeze.apply(player);
 
-            try {
-                long id = storage.save(freeze);
-                Freeze savedFreeze = storage.retrieve(Freeze.class, id);
-                freezedPlayers.put(player.getUuid(), savedFreeze);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                throw new CommandException(new LiteralText("Не удалось сохранить информацию о заморозке"));
-            }
+            CompletableFuture.runAsync(() -> {
+                try {
+                    long id = storage.save(freeze);
+                    Freeze savedFreeze = storage.retrieve(Freeze.class, id);
+                    freezedPlayers.put(player.getUuid(), savedFreeze);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            });
 
             source.sendFeedback(new LiteralText("Игрок ").append(player.getDisplayName()).append(" был заморожен"), true);
         }

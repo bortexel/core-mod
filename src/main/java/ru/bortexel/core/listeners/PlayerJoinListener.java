@@ -14,7 +14,6 @@ public class PlayerJoinListener extends ModPart implements ServerPlayerEvents.Pl
 
     @Override
     public ActionResult join(ServerPlayerEntity player) {
-        System.out.println(1);
         Freeze freeze = this.getCoreMod().getFreezedPlayers().get(player.getUuid());
         if (freeze == null) return ActionResult.PASS;
         freeze.apply(player);
