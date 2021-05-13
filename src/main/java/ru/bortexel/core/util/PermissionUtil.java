@@ -7,6 +7,8 @@ import net.luckperms.api.platform.PlayerAdapter;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.UUID;
+
 public class PermissionUtil {
     private final static String PERMISSION_NAMESPACE = "bortexel";
 
