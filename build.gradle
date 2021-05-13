@@ -54,6 +54,7 @@ dependencies {
 
     compile "org.xerial:sqlite-jdbc:${project.sqlite_version}"
     compile "ru.ruscalworld:storagelib:${project.storagelib_version}"
+    compile "ru.bortexel:bortexel4j:${project.bortexel4j_version}"
 
     compileOnly 'net.luckperms:api:5.3'
 }
@@ -94,12 +95,17 @@ shadowJar {
     archiveClassifier = "all-dev"
 
     dependencies {
+        include(dependency("ru.bortexel:bortexel4j:${project.bortexel4j_version}"))
         include(dependency("org.xerial:sqlite-jdbc:${project.sqlite_version}"))
         include(dependency("ru.ruscalworld:storagelib:${project.storagelib_version}"))
+        include(dependency("com.squareup.okhttp3:okhttp"))
+        include(dependency("com.squareup.okio:okio"))
     }
 
     relocate("ru.ruscalworld.bortexel4j", "ru.bortexel.core.dependencies.bortexel4j")
     relocate("ru.ruscalworld.storagelib", "ru.bortexel.core.dependencies.storagelib")
+    relocate("okhttp3", "ru.bortexel.chat.dependencies.okhttp3")
+    relocate("okio", "ru.bortexel.chat.dependencies.okio")
 }
 
 task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
