@@ -12,12 +12,14 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import okhttp3.OkHttpClient;
 import ru.bortexel.core.commands.admin.FreezeCommand;
+import ru.bortexel.core.commands.admin.SpectateCommand;
 import ru.bortexel.core.config.CoreConfig;
 import ru.bortexel.core.events.ServerPlayerEvents;
 import ru.bortexel.core.listeners.PlayerJoinListener;
 import ru.bortexel.core.listeners.PlayerMoveListener;
 import ru.bortexel.core.listeners.bortexel.BanListener;
 import ru.bortexel.core.models.Freeze;
+import ru.bortexel.core.util.Location;
 import ru.ruscalworld.bortexel4j.Bortexel4J;
 import ru.ruscalworld.bortexel4j.listening.BroadcastingServer;
 import ru.ruscalworld.storagelib.Storage;
@@ -39,6 +41,7 @@ public class Core implements ModInitializer {
     private MinecraftServer server;
 
     private final HashMap<UUID, Freeze> freezedPlayers = new HashMap<>();
+    private final HashMap<UUID, Location> spectatorLocations = new HashMap<>();
 
     @Override
     public void onInitialize() {
@@ -70,6 +73,7 @@ public class Core implements ModInitializer {
             if (!dedicated) return;
             FreezeCommand.registerFreeze(dispatcher, this);
             FreezeCommand.registerUnfreeze(dispatcher, this);
+            SpectateCommand.register(dispatcher, this);
         }));
 
         try {
@@ -128,5 +132,9 @@ public class Core implements ModInitializer {
 
     public void setServer(MinecraftServer server) {
         this.server = server;
+    }
+
+    public HashMap<UUID, Location> getSpectatorLocations() {
+        return spectatorLocations;
     }
 }

@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_11",
   "server": [
     "PlayerManagerMixin",
+    "SpectateCommandMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin"
   ],
