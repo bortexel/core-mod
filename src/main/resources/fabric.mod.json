@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "core",
+  "id": "bortexel-core",
   "version": "${version}",
   "name": "BortexelCore",
   "description": "Core mod for Bortexel server",
@@ -12,7 +12,6 @@
     "repo": "https://github.com/bortexel/core-mod"
   },
   "license": "MIT",
-  "icon": "assets/core/icon.png",
   "environment": "server",
   "entrypoints": {
     "main": [
@@ -20,7 +19,7 @@
     ]
   },
   "mixins": [
-    "core.mixins.json"
+    "bortexel-core.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.11.3",

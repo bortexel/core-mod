@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "ru.bortexel.core.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_11",
   "server": [
     "PlayerManagerMixin",
     "ServerPlayerEntityMixin",
