@@ -42,12 +42,12 @@ public class SpectateCommand extends ModPart {
         HashMap<UUID, Location> locations = this.getCoreMod().getSpectatorLocations();
 
         if (target != null) {
+            // And save previous location, if the previous one doesn't exist
+            if (!locations.containsKey(admin.getUuid())) locations.put(admin.getUuid(), Location.getForPlayer(admin));
+
             // If target is not null, teleport to the player
             admin.setGameMode(GameMode.SPECTATOR);
             admin.teleport(target.getServerWorld(), target.getX(), target.getY(), target.getZ(), 0, 0);
-
-            // And save previous location, if the previous one doesn't exist
-            if (!locations.containsKey(admin.getUuid())) locations.put(admin.getUuid(), Location.getForPlayer(admin));
         } else {
             if (locations.containsKey(admin.getUuid())) {
                 // If target is null and previous location exists, then disable spectator
