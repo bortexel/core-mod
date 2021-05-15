@@ -63,9 +63,8 @@ public class SpectateCommand extends ModPart {
     }
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, Core mod) {
-        LiteralCommandNode<ServerCommandSource> command = dispatcher.register(literal("spectate").requires(source -> PermissionUtil.hasNamespacedPermission(source, "spectate")).then(
+        dispatcher.register(literal("sp").requires(source -> PermissionUtil.hasNamespacedPermission(source, "spectate")).then(
                 argument("player", EntityArgumentType.player()).executes(new SpectateCommand(mod)::spectatePlayer)
         ).executes(new SpectateCommand(mod)::spectate));
-        dispatcher.register(literal("sp").requires(source -> PermissionUtil.hasNamespacedPermission(source, "spectate")).redirect(command));
     }
 }
