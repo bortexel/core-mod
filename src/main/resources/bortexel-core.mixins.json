@@ -7,6 +7,7 @@
     "PlayerManagerMixin",
     "SpectateCommandMixin",
     "GameModeCommandMixin",
+    "TeleportCommandMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin"
   ],

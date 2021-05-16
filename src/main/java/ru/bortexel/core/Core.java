@@ -13,6 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import okhttp3.OkHttpClient;
 import ru.bortexel.core.commands.admin.FreezeCommand;
 import ru.bortexel.core.commands.admin.SpectateCommand;
+import ru.bortexel.core.commands.admin.TeleportCommand;
 import ru.bortexel.core.config.CoreConfig;
 import ru.bortexel.core.events.ServerPlayerEvents;
 import ru.bortexel.core.listeners.PlayerJoinListener;
@@ -74,6 +75,7 @@ public class Core implements ModInitializer {
             FreezeCommand.registerFreeze(dispatcher, this);
             FreezeCommand.registerUnfreeze(dispatcher, this);
             SpectateCommand.register(dispatcher, this);
+            TeleportCommand.register(dispatcher);
         }));
 
         try {
