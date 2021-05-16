@@ -28,7 +28,7 @@ public abstract class GameModeCommandMixin {
 
     @Inject(method = "register", at = @At("HEAD"), cancellable = true)
     private static void register(CommandDispatcher<ServerCommandSource> dispatcher, CallbackInfo info) {
-        LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = CommandManager.literal("gamemode").requires((serverCommandSource) -> serverCommandSource.hasPermissionLevel(2) && PermissionUtil.hasPermission(serverCommandSource, "minecraft.command.gamemode"));
+        LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = CommandManager.literal("gamemode").requires((serverCommandSource) -> serverCommandSource.hasPermissionLevel(2) || PermissionUtil.hasPermission(serverCommandSource, "minecraft.command.gamemode"));
         GameMode[] var2 = GameMode.values();
 
         for (GameMode gameMode : var2) {
