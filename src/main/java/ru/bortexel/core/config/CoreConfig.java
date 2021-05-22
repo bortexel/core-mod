@@ -8,29 +8,18 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 public class CoreConfig {
-    private final String apiToken;
-    private final String apiUrl;
-    private final String bcsUrl;
+    private final boolean logCartographerTrades;
 
     public CoreConfig() throws IOException {
-        Path path = FabricLoader.getInstance().getConfigDir().resolve("bortexel/api.properties");
+        Path path = FabricLoader.getInstance().getConfigDir().resolve("bortexel/core.properties");
         Properties properties = new Properties();
+        if (!Files.exists(path)) Files.createFile(path);
         properties.load(Files.newInputStream(path));
 
-        this.apiToken = properties.getProperty("api-token", "");
-        this.apiUrl = properties.getProperty("api-url", "https://api.bortexel.ru/v3");
-        this.bcsUrl = properties.getProperty("bcs-url", "wss://bcs.bortexel.ru/v1/websocket");
+        this.logCartographerTrades = properties.getProperty("log-cartographer-trades", "false").equalsIgnoreCase("true");
     }
 
-    public String getApiToken() {
-        return apiToken;
-    }
-
-    public String getApiUrl() {
-        return apiUrl;
-    }
-
-    public String getBcsUrl() {
-        return bcsUrl;
+    public boolean shouldLogCartographerTrades() {
+        return logCartographerTrades;
     }
 }

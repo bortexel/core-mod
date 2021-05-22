@@ -4,16 +4,12 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.luckperms.api.LuckPermsProvider;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import okhttp3.OkHttpClient;
 import ru.bortexel.core.commands.admin.FreezeCommand;
 import ru.bortexel.core.commands.admin.SpectateCommand;
 import ru.bortexel.core.commands.admin.TeleportCommand;
+import ru.bortexel.core.config.BortexelConfig;
 import ru.bortexel.core.config.CoreConfig;
 import ru.bortexel.core.events.ServerPlayerEvents;
 import ru.bortexel.core.listeners.PlayerJoinListener;
@@ -33,11 +29,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class Core implements ModInitializer {
+    private static Core INSTANCE;
     public static final Path DATABASE_PATH = FabricLoader.getInstance().getGameDir().resolve("mods/bortexel/core.db");
 
     private Storage storage;
     private Bortexel4J bortexelClient;
     private CoreConfig config;
+    private BortexelConfig bortexelConfig;
     private OkHttpClient httpClient;
     private MinecraftServer server;
 
@@ -61,9 +59,9 @@ public class Core implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(this::setServer);
 
         this.setHttpClient(new OkHttpClient());
-        this.setBortexelClient(Bortexel4J.login(this.getConfig().getApiToken(), this.getConfig().getApiUrl(), this.getHttpClient()));
+        this.setBortexelClient(Bortexel4J.login(this.getBortexelConfig().getApiToken(), this.getBortexelConfig().getApiUrl(), this.getHttpClient()));
 
-        BroadcastingServer broadcastingServer = this.getBortexelClient().getBroadcastingServer(this.getConfig().getBcsUrl());
+        BroadcastingServer broadcastingServer = this.getBortexelClient().getBroadcastingServer(this.getBortexelConfig().getBcsUrl());
         broadcastingServer.registerListener(new BanListener(this));
         broadcastingServer.connect();
 
@@ -86,11 +84,13 @@ public class Core implements ModInitializer {
         }
 
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> broadcastingServer.disconnect());
+        INSTANCE = this;
     }
 
     protected void loadConfig() {
         try {
             this.config = new CoreConfig();
+            this.bortexelConfig = new BortexelConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -116,8 +116,8 @@ public class Core implements ModInitializer {
         this.bortexelClient = bortexelClient;
     }
 
-    public CoreConfig getConfig() {
-        return config;
+    public BortexelConfig getBortexelConfig() {
+        return bortexelConfig;
     }
 
     public OkHttpClient getHttpClient() {
@@ -138,5 +138,13 @@ public class Core implements ModInitializer {
 
     public HashMap<UUID, Location> getSpectatorLocations() {
         return spectatorLocations;
+    }
+
+    public CoreConfig getConfig() {
+        return config;
+    }
+
+    public static Core getInstance() {
+        return INSTANCE;
     }
 }
