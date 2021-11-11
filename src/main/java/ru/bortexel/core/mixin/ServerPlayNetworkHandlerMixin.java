@@ -1,8 +1,5 @@
 package ru.bortexel.core.mixin;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.packet.c2s.play.BookUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -18,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.bortexel.core.events.ServerPlayerEvents;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin {
@@ -38,19 +36,14 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
     @Inject(method = "onBookUpdate", at = @At("HEAD"))
     public void onBookUpdate(BookUpdateC2SPacket packet, CallbackInfo info) {
-        ItemStack book = packet.getBook();
-        CompoundTag tag = book.getTag();
-        if (tag == null) return;
-
-        ListTag pages = tag.getList("pages", 8);
+        List<String> pages = packet.getPages();
         if (pages.size() > 100) {
             disconnect(new LiteralText("Книга слишком большая"));
             return;
         }
 
         long total = 0;
-        for (int i = 0; i < pages.size(); i++) {
-            String string = pages.getString(i);
+        for (String string : pages) {
             int length = string.getBytes(StandardCharsets.UTF_8).length;
             if (length > 1024) {
                 disconnect(new LiteralText("Книга слишком большая"));

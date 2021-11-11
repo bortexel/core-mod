@@ -1,5 +1,6 @@
 package ru.bortexel.core.mixin;
 
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.text.LiteralText;
@@ -16,12 +17,12 @@ import java.util.HashMap;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin {
-    @Shadow @Final public ServerPlayerInteractionManager interactionManager;
+    @Shadow public ServerPlayNetworkHandler networkHandler;
 
     @Inject(method = "getPlayerListName", at = @At("HEAD"), cancellable = true)
     public void getPlayerListName(CallbackInfoReturnable<Text> info) {
         HashMap<String, String> prefixes = PrefixUtil.getPrefixMap();
-        ServerPlayerEntity player = this.interactionManager.player;
+        ServerPlayerEntity player = this.networkHandler.player;
         String prefix = PrefixUtil.getPrefix(player, prefixes);
         info.setReturnValue(new LiteralText(prefix + player.getEntityName()));
     }

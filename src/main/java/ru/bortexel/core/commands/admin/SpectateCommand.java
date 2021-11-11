@@ -5,6 +5,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
@@ -40,23 +42,25 @@ public class SpectateCommand extends ModPart {
 
     private void spectate(ServerPlayerEntity admin, @Nullable ServerPlayerEntity target) {
         HashMap<UUID, Location> locations = this.getCoreMod().getSpectatorLocations();
+        MinecraftServer server = this.getCoreMod().getServer();
+        PlayerManager playerManager = server.getPlayerManager();
 
         if (target != null) {
             // And save previous location, if the previous one doesn't exist
             if (!locations.containsKey(admin.getUuid())) locations.put(admin.getUuid(), Location.getForPlayer(admin));
 
             // If target is not null, teleport to the player
-            admin.setGameMode(GameMode.SPECTATOR);
+            admin.changeGameMode(GameMode.SPECTATOR);
             admin.teleport(target.getServerWorld(), target.getX(), target.getY(), target.getZ(), 0, 0);
         } else {
             if (locations.containsKey(admin.getUuid())) {
                 // If target is null and previous location exists, then disable spectator
                 Location location = locations.remove(admin.getUuid());
                 location.bring(admin);
-                admin.setGameMode(GameMode.SURVIVAL);
+                admin.changeGameMode(GameMode.SURVIVAL);
             } else {
                 // Target is not null, but there is no previous location, so enable spectator
-                admin.setGameMode(GameMode.SPECTATOR);
+                admin.changeGameMode(GameMode.SPECTATOR);
                 locations.put(admin.getUuid(), Location.getForPlayer(admin));
             }
         }

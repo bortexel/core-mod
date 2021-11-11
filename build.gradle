@@ -8,14 +8,14 @@ buildscript {
 
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
-    id 'fabric-loom' version '0.7.29'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version as Object
@@ -23,19 +23,11 @@ group = project.maven_group as Object
 
 repositories {
     maven {
-        name = 'Bortexel'
-        url = 'https://maven.pkg.github.com/bortexel/bortexel4j'
+        name = 'RuscalWorld Releases'
+        url = 'https://maven.ruscalworld.ru/releases'
         credentials {
-            username = BortexelUsername
-            password = BortexelPassword
-        }
-    }
-    maven {
-        name = 'RuscalWorld'
-        url = 'https://maven.pkg.github.com/ruscalworld/storagelib'
-        credentials {
-            username = BortexelUsername
-            password = BortexelPassword
+            username = MavenUsername
+            password = MavenPassword
         }
     }
 }
@@ -52,15 +44,16 @@ dependencies {
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
 
-    compile "org.xerial:sqlite-jdbc:${project.sqlite_version}"
-    compile "ru.ruscalworld:storagelib:${project.storagelib_version}"
-    compile "ru.bortexel:bortexel4j:${project.bortexel4j_version}"
+    implementation "org.xerial:sqlite-jdbc:${project.sqlite_version}"
+    implementation "ru.ruscalworld:storagelib:${project.storagelib_version}"
+    implementation "ru.bortexel:bortexel4j:${project.bortexel4j_version}"
 
     compileOnly 'net.luckperms:api:5.3'
 }
 
 processResources {
     inputs.property "version", project.version
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     from(sourceSets.main.resources.srcDirs) {
         include "fabric.mod.json"

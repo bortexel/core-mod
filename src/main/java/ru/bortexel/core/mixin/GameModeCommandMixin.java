@@ -32,7 +32,7 @@ public abstract class GameModeCommandMixin {
         GameMode[] var2 = GameMode.values();
 
         for (GameMode gameMode : var2) {
-            if (gameMode != GameMode.NOT_SET) {
+            if (gameMode != GameMode.DEFAULT) {
                 literalArgumentBuilder.then(
                         (CommandManager.literal(gameMode.getName()).executes((commandContext) -> execute(commandContext, Collections.singleton(commandContext.getSource().getPlayer()), gameMode))).then(
                                 CommandManager.argument("target", EntityArgumentType.players()).executes((commandContext) -> execute(commandContext, EntityArgumentType.getPlayers(commandContext, "target"), gameMode))
