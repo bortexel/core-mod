@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class PrefixUtil {
-    public static final List<String> IMPORTANT_PREFIXES = new ArrayList<String>() {{
+    public static final List<String> IMPORTANT_PREFIXES = new ArrayList<>() {{
         add("admin");
         add("moderator");
         add("helper");
     }};
 
     public static HashMap<String, String> getPrefixMap() {
-        return new HashMap<String, String>() {{
+        return new HashMap<>() {{
             put("admin", "§c§l * §r§f");
             put("moderator", "§e§l * §r§f");
             put("helper", "§2§l * §r§f");

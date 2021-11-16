@@ -13,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.bortexel.core.util.PrefixUtil;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin {
@@ -22,8 +24,17 @@ public abstract class ServerPlayerEntityMixin {
     @Inject(method = "getPlayerListName", at = @At("HEAD"), cancellable = true)
     public void getPlayerListName(CallbackInfoReturnable<Text> info) {
         HashMap<String, String> prefixes = PrefixUtil.getPrefixMap();
-        ServerPlayerEntity player = this.networkHandler.player;
-        String prefix = PrefixUtil.getPrefix(player, prefixes);
-        info.setReturnValue(new LiteralText(prefix + player.getEntityName()));
+        Optional<ServerPlayerEntity> player = this.getThis();
+        if (player.isEmpty()) return;
+        String prefix = PrefixUtil.getPrefix(player.get(), prefixes);
+        info.setReturnValue(new LiteralText(prefix + player.get().getEntityName()));
+    }
+
+    private Optional<ServerPlayerEntity> getThis() {
+        try {
+            return Optional.ofNullable(networkHandler.player);
+        } catch (Exception exception) {
+            return Optional.empty();
+        }
     }
 }
