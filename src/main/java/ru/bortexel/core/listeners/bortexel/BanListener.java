@@ -18,7 +18,7 @@ public class BanListener extends EventListener {
 
     @Override
     public void onBanCreated(GenericBanEvent event) {
-        Ban ban = event.getPayload();
+        Ban ban = event.getBan();
         String username = ban.getUsername();
 
         PlayerManager playerManager = this.getMod().getServer().getPlayerManager();
