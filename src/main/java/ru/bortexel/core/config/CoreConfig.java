@@ -9,6 +9,7 @@ import java.util.Properties;
 
 public class CoreConfig {
     private final boolean logCartographerTrades;
+    private final boolean handlePrefixes;
 
     public CoreConfig() throws IOException {
         Path path = FabricLoader.getInstance().getConfigDir().resolve("bortexel/core.properties");
@@ -17,9 +18,14 @@ public class CoreConfig {
         properties.load(Files.newInputStream(path));
 
         this.logCartographerTrades = properties.getProperty("log-cartographer-trades", "false").equalsIgnoreCase("true");
+        this.handlePrefixes = properties.getProperty("handle-prefixes", "true").equalsIgnoreCase("true");
     }
 
     public boolean shouldLogCartographerTrades() {
         return logCartographerTrades;
+    }
+
+    public boolean shouldHandlePrefixes() {
+        return handlePrefixes;
     }
 }
